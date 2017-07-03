@@ -43,7 +43,28 @@ var elem = { name: "pos", data: ["Float3", 2] };
 var structure0 = { elements: [elem] };
 var vert = Krom.createVertexShaderFromSource(vs);
 var frag = Krom.createFragmentShaderFromSource(fs);
-Krom.compilePipeline(pipeline, structure0, null, null, null, 1, vert, frag, null, null, null);
+Krom.compilePipeline(pipeline, structure0, null, null, null, 1, vert, frag, null, null, null, {
+	interleavedLayout: true,
+	cullMode: 0,
+	depthWrite: true,
+	depthMode: 0,
+	stencilMode: 0,
+	stencilBothPass: 0,
+	stencilDepthFail: 0,
+	stencilFail: 0,
+	stencilReferenceValue: 0,
+	stencilReadMask: 0,
+	stencilWriteMask: 0,
+	blendSource: 0,
+	blendDestination: 0,
+	alphaBlendSource: 0,
+	alphaBlendDestination: 0,
+	colorWriteMaskRed: true,
+	colorWriteMaskGreen: true,
+	colorWriteMaskBlue: true,
+	colorWriteMaskAlpha: true,
+	conservativeRasterization: false
+});
 
 var vb = Krom.createVertexBuffer(vertices.length / 3, structure0.elements, 0);
 var vbData = new Float32Array(vertices.length);
@@ -51,7 +72,9 @@ for (i = 0; i < vertices.length; i++) vbData[i] = vertices[i];
 Krom.setVertices(vb, vbData);
 
 var ib = Krom.createIndexBuffer(indices.length);
-Krom.setIndices(ib, indices);
+var ibData = new Uint32Array(indices.length);
+for (i = 0; i < indices.length; i++) ibData[i] = indices[i];
+Krom.setIndices(ib, ibData);
 
 function renderCallback() {
 	Krom.begin(null, null);
@@ -62,8 +85,6 @@ function renderCallback() {
 	Krom.clear(flags, 0xff000000, 1.0, null);
 
 	Krom.setPipeline(pipeline);
-	// Krom.setCullMode(0);
-	// Krom.setDepthMode(false, 0);
 	Krom.setVertexBuffer(vb);
 	Krom.setIndexBuffer(ib);
 	Krom.drawIndexedVertices(0, -1);
