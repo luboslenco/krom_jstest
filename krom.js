@@ -1,4 +1,19 @@
-// ./Krom_bin/macos/Krom.app/Contents/MacOS/Krom . . --nosound
+// ./Krom_bin/macos/Krom.app/Contents/MacOS/Krom . . --stdout out.txt
+
+function dropFilesCallback(path) {}
+function keyboardDownCallback(key) {}
+function keyboardUpCallback(key) {}
+function keyboardPressCallback(char) {}
+function mouseDownCallback(button, x, y) {}
+function mouseUpCallback(button, x, y) {}
+function mouseMoveCallback(x, y, mx, my) {}
+function mouseWheelCallback(delta) {}
+function gamepadAxisCallback(gamepad, axis, value) {}
+function gamepadButtonCallback(gamepad, button, value) {}
+function penDownCallback(x, y, pressure) {}
+function penUpCallback(x, y, pressure) {}
+function penMoveCallback(x, y, pressure) {}
+function audioCallback(samples) {}
 
 var vs = `
 #version 330
@@ -36,6 +51,9 @@ Krom.setMouseMoveCallback(mouseMoveCallback);
 Krom.setMouseWheelCallback(mouseWheelCallback);
 Krom.setGamepadAxisCallback(gamepadAxisCallback);
 Krom.setGamepadButtonCallback(gamepadButtonCallback);
+Krom.setPenDownCallback(penDownCallback);
+Krom.setPenUpCallback(penUpCallback);
+Krom.setPenMoveCallback(penMoveCallback);
 Krom.setAudioCallback(audioCallback);
 
 var pipeline = Krom.createPipeline();
@@ -67,14 +85,14 @@ Krom.compilePipeline(pipeline, structure0, null, null, null, 1, vert, frag, null
 });
 
 var vb = Krom.createVertexBuffer(vertices.length / 3, structure0.elements, 0);
-var vbData = new Float32Array(vertices.length);
+var vbData = Krom.lockVertexBuffer(vb);
 for (i = 0; i < vertices.length; i++) vbData[i] = vertices[i];
-Krom.setVertices(vb, vbData);
+Krom.unlockVertexBuffer(vb);
 
 var ib = Krom.createIndexBuffer(indices.length);
-var ibData = new Uint32Array(indices.length);
+var ibData = Krom.lockIndexBuffer(ib);
 for (i = 0; i < indices.length; i++) ibData[i] = indices[i];
-Krom.setIndices(ib, ibData);
+Krom.unlockIndexBuffer(ib);
 
 function renderCallback() {
 	Krom.begin(null, null);
@@ -91,15 +109,3 @@ function renderCallback() {
 
 	Krom.end();
 }
-
-function dropFilesCallback(path) {}
-function keyboardDownCallback(key) {}
-function keyboardUpCallback(key) {}
-function keyboardPressCallback(char) {}
-function mouseDownCallback(button, x, y) {}
-function mouseUpCallback(button, x, y) {}
-function mouseMoveCallback(x, y, mx, my) {}
-function mouseWheelCallback(delta) {}
-function gamepadAxisCallback(gamepad, axis, value) {}
-function gamepadButtonCallback(gamepad, button, value) {}
-function audioCallback(samples)  {}
