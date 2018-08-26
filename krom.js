@@ -1,4 +1,4 @@
-// ./Krom_bin/macos/Krom.app/Contents/MacOS/Krom . . --stdout out.txt
+// ./Krom . . --stdout out.txt
 
 function dropFilesCallback(path) {}
 function keyboardDownCallback(key) {}
@@ -57,7 +57,7 @@ Krom.setPenMoveCallback(penMoveCallback);
 Krom.setAudioCallback(audioCallback);
 
 var pipeline = Krom.createPipeline();
-var elem = { name: "pos", data: ["Float3", 2] };
+var elem = { name: "pos", data: 2 }; // Float3
 var structure0 = { elements: [elem] };
 var vert = Krom.createVertexShaderFromSource(vs);
 var frag = Krom.createFragmentShaderFromSource(fs);
