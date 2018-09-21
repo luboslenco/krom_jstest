@@ -1,4 +1,4 @@
-// ./Krom/Krom . .
+// ./Krom_bin/Krom . .
 
 function dropFilesCallback(path) {}
 function keyboardDownCallback(key) {}
