@@ -1,4 +1,4 @@
-// ./Krom . . --stdout out.txt
+// ./Krom/Krom . .
 
 function dropFilesCallback(path) {}
 function keyboardDownCallback(key) {}
@@ -15,6 +15,7 @@ function penUpCallback(x, y, pressure) {}
 function penMoveCallback(x, y, pressure) {}
 function audioCallback(samples) {}
 
+// Note: On Windows, you need to use HLSL shaders or compile Krom with '-g opengl' flag
 var vs = `
 #version 330
 in vec3 pos;

@@ -1,0 +1,3 @@
+[submodule "Krom_bin"]
+	path = Krom_bin
+	url = https://github.com/Kode/Krom_bin
