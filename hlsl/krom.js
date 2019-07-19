@@ -1,6 +1,12 @@
-// ./Krom_bin/Krom . .
-
 function dropFilesCallback(path) {}
+function cutCallback() { return ""; }
+function copyCallback() { return ""; }
+function pasteCallback(string) {}
+function foregroundCallback() {}
+function resumeCallback() {}
+function pauseCallback() {}
+function backgroundCallback() {}
+function shutdownCallback() {}
 function keyboardDownCallback(key) {}
 function keyboardUpCallback(key) {}
 function keyboardPressCallback(char) {}
@@ -15,34 +21,39 @@ function penUpCallback(x, y, pressure) {}
 function penMoveCallback(x, y, pressure) {}
 function audioCallback(samples) {}
 
-// Note: On Windows, you need to use HLSL shaders or compile Krom with '-g opengl' flag
-var vs = `
-#version 330
-in vec3 pos;
-void main() {
-	gl_Position = vec4(pos, 1.0);
+// Note: Compiling HLSL shaders from source requires Kromx
+let vs = `
+struct VSOut { float4 gl_Position : SV_Position; };
+VSOut main(float3 pos : TEXCOORD0) {
+	VSOut output;
+	output.gl_Position = float4(pos, 1.0);
+	return output;
 }
 `;
 
-var fs = `
-#version 330
-out vec4 fragColor;
-void main() {
-	fragColor = vec4(1.0, 0.0, 0.0, 1.0);
+let fs = `
+float4 main() : SV_Target0 {
+	return float4(1.0, 0.0, 0.0, 1.0);
 }
 `;
 
-var vertices = [
+let vertices = [
    -1.0, -1.0, 0.0,
     1.0, -1.0, 0.0,
     0.0,  1.0, 0.0
 ];
 
-var indices = [0, 1, 2];
+let indices = [0, 1, 2];
 
-Krom.init("KromApp", 640, 480, 0, false, 0);
+let api = 3;
+const resizable = 1;
+const minimizable = 2;
+const maximizable = 4;
+Krom.init("KromApp", 640, 480, 1, true, 0, resizable | minimizable | maximizable, api);
 Krom.setCallback(renderCallback);
 Krom.setDropFilesCallback(dropFilesCallback);
+Krom.setCutCopyPasteCallback(cutCallback, copyCallback, pasteCallback);
+Krom.setApplicationStateCallback(foregroundCallback, resumeCallback, pauseCallback, backgroundCallback, shutdownCallback);
 Krom.setKeyboardDownCallback(keyboardDownCallback);
 Krom.setKeyboardUpCallback(keyboardUpCallback);
 Krom.setKeyboardPressCallback(keyboardPressCallback);
@@ -57,13 +68,12 @@ Krom.setPenUpCallback(penUpCallback);
 Krom.setPenMoveCallback(penMoveCallback);
 Krom.setAudioCallback(audioCallback);
 
-var pipeline = Krom.createPipeline();
-var elem = { name: "pos", data: 2 }; // Float3
-var structure0 = { elements: [elem] };
-var vert = Krom.createVertexShaderFromSource(vs);
-var frag = Krom.createFragmentShaderFromSource(fs);
+let pipeline = Krom.createPipeline();
+let elem = { name: "pos", data: 2 }; // Float3
+let structure0 = { elements: [elem] };
+let vert = Krom.createVertexShaderFromSource(vs);
+let frag = Krom.createFragmentShaderFromSource(fs);
 Krom.compilePipeline(pipeline, structure0, null, null, null, 1, vert, frag, null, null, null, {
-	interleavedLayout: true,
 	cullMode: 0,
 	depthWrite: true,
 	depthMode: 0,
@@ -78,27 +88,27 @@ Krom.compilePipeline(pipeline, structure0, null, null, null, 1, vert, frag, null
 	blendDestination: 0,
 	alphaBlendSource: 0,
 	alphaBlendDestination: 0,
-	colorWriteMaskRed: true,
-	colorWriteMaskGreen: true,
-	colorWriteMaskBlue: true,
-	colorWriteMaskAlpha: true,
+	colorWriteMaskRed: [true, true, true, true, true, true, true, true],
+	colorWriteMaskGreen: [true, true, true, true, true, true, true, true],
+	colorWriteMaskBlue: [true, true, true, true, true, true, true, true],
+	colorWriteMaskAlpha: [true, true, true, true, true, true, true, true],
 	conservativeRasterization: false
 });
 
-var vb = Krom.createVertexBuffer(vertices.length / 3, structure0.elements, 0);
-var vbData = Krom.lockVertexBuffer(vb);
+let vb = Krom.createVertexBuffer(vertices.length / 3, structure0.elements, 0);
+let vbData = Krom.lockVertexBuffer(vb);
 for (i = 0; i < vertices.length; i++) vbData[i] = vertices[i];
 Krom.unlockVertexBuffer(vb);
 
-var ib = Krom.createIndexBuffer(indices.length);
-var ibData = Krom.lockIndexBuffer(ib);
+let ib = Krom.createIndexBuffer(indices.length);
+let ibData = Krom.lockIndexBuffer(ib);
 for (i = 0; i < indices.length; i++) ibData[i] = indices[i];
 Krom.unlockIndexBuffer(ib);
 
 function renderCallback() {
 	Krom.begin(null, null);
 	
-	var flags = 0;
+	let flags = 0;
 	flags |= 1; // Color
 	flags |= 2; // Depth
 	Krom.clear(flags, 0xff000000, 1.0, null);
