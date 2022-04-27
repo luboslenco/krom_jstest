@@ -46,7 +46,7 @@ let vertices = [
 
 let indices = [0, 1, 2];
 
-let api = 3;
+let api = 6;
 const resizable = 1;
 const minimizable = 2;
 const maximizable = 4;
